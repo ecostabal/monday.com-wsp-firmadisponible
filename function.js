@@ -32,7 +32,16 @@ async function getMondayItemData(itemId) {
         }
     });
 
-    return response.data?.data?.items[0];
+    const itemData = response.data?.data?.items[0];
+
+    // Verificar el tipo de contrato
+    const contractType = itemData.column_values.find(cv => cv.id === 'estado_1')?.text;
+    if (contractType !== 'Arriendo') {
+        console.log('El tipo de contrato no es Arriendo. Función no ejecutada.');
+        return null;
+    }
+
+    return itemData;
 }
 
 // Función para enviar mensaje de WhatsApp
@@ -73,6 +82,7 @@ async function sendWhatsAppMessage(to, name, address) {
     }
 }
 
+// Función principal para procesar subelementos y enviar mensajes de WhatsApp
 async function processSubElementsAndSendMessages(itemId) {
     try {
         const itemData = await getMondayItemData(itemId);
